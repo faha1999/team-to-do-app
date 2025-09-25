@@ -35,25 +35,33 @@ export function QuickAdd({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full gap-3">
-      <input
-        className="flex-1 rounded-xl border border-black/10 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-inner shadow-black/5 focus:border-slate-900 focus:outline-none"
-        placeholder="Add a task..."
-        value={title}
-        onChange={(event) => setTitle(event.target.value)}
-      />
-      <button
-        type="submit"
-        className="rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
-        disabled={isPending}
+    <div className="space-y-2">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full items-center gap-3 rounded-lg border border-[#eadfd0] bg-white px-4 py-3 shadow-sm shadow-[#f0e3d4]"
       >
-        {isPending ? "Adding…" : "Add"}
-      </button>
+        <span className="grid h-6 w-6 place-items-center rounded-full border border-[#eadfd0] bg-[#fdf4ec] text-base leading-none text-[#d4522f]" aria-hidden>
+          +
+        </span>
+        <input
+          className="flex-1 border-none bg-transparent text-sm text-[#3c2f23] placeholder:text-[#b9a896] focus:outline-none"
+          placeholder="Add a task"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+        />
+        <button
+          type="submit"
+          className="rounded-md bg-[#e05b37] px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-[#c64c2b] disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={isPending}
+        >
+          {isPending ? "Saving" : "Add"}
+        </button>
+      </form>
       {error ? (
-        <p className="self-end text-xs text-rose-600" aria-live="polite">
+        <p className="text-xs text-[#d4522f]" aria-live="polite">
           {error}
         </p>
       ) : null}
-    </form>
+    </div>
   );
 }

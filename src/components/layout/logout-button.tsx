@@ -9,7 +9,7 @@ function SubmitButton() {
   return (
     <button
       type="submit"
-      className="rounded-full bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
+      className="rounded-md border border-[#eadfd0] bg-white px-3 py-1.5 text-sm font-medium text-[#7a6757] transition hover:bg-[#f7efe6] hover:text-[#3c2f23] disabled:cursor-not-allowed disabled:opacity-60"
       disabled={pending}
     >
       {pending ? "Signing out…" : "Sign out"}

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --app-background: #f4f5f8;
-  --app-foreground: #0f1115;
+  --app-background: #fdf9f4;
+  --app-foreground: #352c23;
 }
 
 html,
@@ -28,5 +28,5 @@ textarea {
 }
 
 * {
-  border-color: rgba(15, 17, 21, 0.08);
+  border-color: rgba(167, 144, 120, 0.25);
 }

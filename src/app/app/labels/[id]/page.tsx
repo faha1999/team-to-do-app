@@ -44,7 +44,7 @@ export default async function LabelDetailPage({
   const tasks = label.tasks.map((taskLabel) => taskLabel.task);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageHeader
         title={`Label · ${label.name}`}
         description={
@@ -60,10 +60,14 @@ export default async function LabelDetailPage({
           description="Once tasks are tagged with this label, they will appear here for fast review."
         />
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {tasks.map((task) => (
-            <TaskItem key={task.id} task={task} />
-          ))}
+        <div className="rounded-xl border border-[#eadfd0] bg-white">
+          <ul className="divide-y divide-[#f0e3d4]">
+            {tasks.map((task) => (
+              <li key={task.id}>
+                <TaskItem task={task} />
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

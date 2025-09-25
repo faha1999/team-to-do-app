@@ -8,11 +8,11 @@ export function BoardColumn({
   children: ReactNode;
 }) {
   return (
-    <article className="flex w-80 flex-col gap-3 rounded-2xl border border-black/10 bg-white/70 p-5 shadow-inner shadow-black/5 backdrop-blur">
-      <h3 className="text-xs font-semibold uppercase tracking-[0.45em] text-slate-500">
+    <article className="flex w-80 min-w-[18rem] flex-col gap-3 rounded-xl border border-[#eadfd0] bg-white px-4 py-4">
+      <h3 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8f7f6f]">
         {title}
       </h3>
-      <div className="flex flex-1 flex-col gap-3">{children}</div>
+      <div className="flex flex-1 flex-col divide-y divide-[#f0e3d4]">{children}</div>
     </article>
   );
 }

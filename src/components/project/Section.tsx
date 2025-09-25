@@ -2,13 +2,13 @@ import type { ReactNode } from "react";
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="space-y-4 rounded-2xl border border-black/5 bg-white/80 p-6 shadow-sm shadow-black/5">
+    <section className="space-y-3 rounded-xl border border-[#eadfd0] bg-white px-5 py-5">
       <header className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8f7f6f]">
           {title}
         </h2>
       </header>
-      <div className="space-y-3">{children}</div>
+      <div className="divide-y divide-[#f0e3d4] rounded-lg">{children}</div>
     </section>
   );
 }

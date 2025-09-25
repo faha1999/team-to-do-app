@@ -31,7 +31,7 @@ export default async function UpcomingPage() {
   const days = eachDayOfInterval({ start: today, end: horizon });
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageHeader
         title="Upcoming"
         description="A rolling 14-day view to balance capacity and stay ahead of deadlines."
@@ -52,14 +52,18 @@ export default async function UpcomingPage() {
             if (dailyTasks.length === 0) return null;
 
             return (
-              <section key={day.toISOString()} className="space-y-4">
-                <h2 className="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">
+              <section key={day.toISOString()} className="space-y-3">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8f7f6f]">
                   {format(day, "EEEE • dd MMM")}
                 </h2>
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {dailyTasks.map((task) => (
-                    <TaskItem key={task.id} task={task} />
-                  ))}
+                <div className="rounded-xl border border-[#eadfd0] bg-white">
+                  <ul className="divide-y divide-[#f0e3d4]">
+                    {dailyTasks.map((task) => (
+                      <li key={task.id}>
+                        <TaskItem task={task} />
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </section>
             );

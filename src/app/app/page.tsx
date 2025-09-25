@@ -34,7 +34,7 @@ export default async function TodayPage() {
   const unscheduled = tasks.filter((task) => !task.dueDate);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <PageHeader
         title={`Today · ${format(todayStart, "EEEE, dd MMMM")}`}
         description="Review priorities, capture new work, and move key initiatives forward."
@@ -42,48 +42,60 @@ export default async function TodayPage() {
       />
 
       {overdue.length > 0 ? (
-        <section className="space-y-4">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.4em] text-rose-500">
+        <section className="space-y-3">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#d4522f]">
             Overdue
           </h2>
-          <div className="grid gap-4 lg:grid-cols-2">
-            {overdue.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
+          <div className="rounded-xl border border-[#eadfd0] bg-white">
+            <ul className="divide-y divide-[#f0e3d4]">
+              {overdue.map((task) => (
+                <li key={task.id}>
+                  <TaskItem task={task} />
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       ) : null}
 
-      <section className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">
+      <section className="space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8f7f6f]">
           Due today
         </h2>
         {dueToday.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 bg-white/60 p-6 text-sm text-slate-500">
+          <p className="rounded-xl border border-dashed border-[#eadfd0] bg-[#fdf9f4] px-6 py-8 text-sm text-[#8f7f6f]">
             No tasks scheduled for today. Capture new commitments or pull from upcoming.
           </p>
         ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {dueToday.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
+          <div className="rounded-xl border border-[#eadfd0] bg-white">
+            <ul className="divide-y divide-[#f0e3d4]">
+              {dueToday.map((task) => (
+                <li key={task.id}>
+                  <TaskItem task={task} />
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </section>
 
-      <section className="space-y-4">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.4em] text-slate-500">
+      <section className="space-y-3">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.4em] text-[#8f7f6f]">
           Unscheduled
         </h2>
         {unscheduled.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 bg-white/60 p-6 text-sm text-slate-500">
+          <p className="rounded-xl border border-dashed border-[#eadfd0] bg-[#fdf9f4] px-6 py-8 text-sm text-[#8f7f6f]">
             Everything is scheduled. Great job staying ahead.
           </p>
         ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {unscheduled.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
+          <div className="rounded-xl border border-[#eadfd0] bg-white">
+            <ul className="divide-y divide-[#f0e3d4]">
+              {unscheduled.map((task) => (
+                <li key={task.id}>
+                  <TaskItem task={task} />
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </section>

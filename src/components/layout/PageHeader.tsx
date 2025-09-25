@@ -10,14 +10,14 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="flex flex-wrap items-end justify-between gap-6 rounded-2xl border border-black/5 bg-white/70 px-6 py-5 shadow-sm shadow-black/5 backdrop-blur">
-      <div>
-        <h1 className="text-3xl font-semibold text-slate-900">{title}</h1>
+    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#eadfd0] pb-5">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-semibold text-[#3c2f23]">{title}</h1>
         {description ? (
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{description}</p>
+          <p className="max-w-2xl text-sm leading-relaxed text-[#8f7f6f]">{description}</p>
         ) : null}
       </div>
-      {actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+      {actions ? <div className="flex items-center gap-2 text-sm text-[#7a6757]">{actions}</div> : null}
     </header>
   );
 }
@@ -32,9 +32,9 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center gap-4 rounded-2xl border border-dashed border-slate-200 bg-white/80 p-10 text-center shadow-inner shadow-black/5">
-      <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
-      <p className="text-sm leading-relaxed text-slate-600">{description}</p>
+    <div className="mx-auto flex max-w-xl flex-col items-center gap-3 rounded-xl border border-dashed border-[#eadfd0] bg-[#fdf9f4] px-10 py-12 text-center">
+      <h2 className="text-base font-semibold text-[#3c2f23]">{title}</h2>
+      <p className="text-sm leading-relaxed text-[#8f7f6f]">{description}</p>
       {action}
     </div>
   );
