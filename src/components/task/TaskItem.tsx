@@ -1,5 +1,9 @@
+"use client";
+
 import { format } from "date-fns";
 import type { Task, Project, Section } from "@prisma/client";
+
+import { useTaskDrawer } from "@/components/task/TaskDrawerProvider";
 
 export type TaskItemProps = {
   task: Task & {
@@ -17,22 +21,34 @@ const statusTone: Record<Task["status"], string> = {
 };
 
 export function TaskItem({ task }: TaskItemProps) {
+  const { openTask } = useTaskDrawer();
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    openTask(task.id, event.currentTarget);
+  };
+
   return (
-    <article className="space-y-3 rounded-2xl border border-black/5 bg-white/80 p-5 shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:shadow-md">
-      <header className="flex items-start justify-between gap-3">
-        <h3 className="text-base font-medium text-slate-900">{task.title}</h3>
-        <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusTone[task.status]}`}>
-          {task.status.replace(/_/g, " ")}
-        </span>
-      </header>
-      {task.description ? (
-        <p className="text-sm text-slate-600">{task.description}</p>
-      ) : null}
-      <footer className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
-        {task.project ? <span>{task.project.name}</span> : <span>Personal</span>}
-        {task.section ? <span>{task.section.name}</span> : null}
-        {task.dueDate ? <span>Due {format(task.dueDate, "dd MMM")}</span> : null}
-      </footer>
-    </article>
+    <button
+      type="button"
+      onClick={handleClick}
+      className="w-full text-left focus:outline-none"
+    >
+      <article className="space-y-3 rounded-2xl border border-black/5 bg-white/80 p-5 shadow-sm shadow-black/5 transition hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-2 focus-visible:ring-black">
+        <header className="flex items-start justify-between gap-3">
+          <h3 className="text-base font-medium text-slate-900">{task.title}</h3>
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${statusTone[task.status]}`}>
+            {task.status.replace(/_/g, " ")}
+          </span>
+        </header>
+        {task.description ? (
+          <p className="text-sm text-slate-600">{task.description}</p>
+        ) : null}
+        <footer className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
+          {task.project ? <span>{task.project.name}</span> : <span>Personal</span>}
+          {task.section ? <span>{task.section.name}</span> : null}
+          {task.dueDate ? <span>Due {format(task.dueDate, "dd MMM")}</span> : null}
+        </footer>
+      </article>
+    </button>
   );
 }
