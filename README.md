@@ -533,9 +533,6 @@ to-doist-clone/
 │   │   │   │       ├── page.tsx        # list view
 │   │   │   │       ├── board/page.tsx  # board view
 │   │   │   │       └── settings/page.tsx
-│   │   │   └── quotes/                  # OPTIONAL module
-│   │   │       ├── page.tsx
-│   │   │       └── [quoteId]/page.tsx
 │   │   ├── api/
 │   │   │   ├── auth/[...nextauth]/route.ts
 │   │   │   ├── upload/route.ts
@@ -816,7 +813,6 @@ model Comment {
 **Phase 3**
 
 - Real-time (socket.io), Offline queue, Data export, Backups UI.
-- Optional **Quotation** module.
 
 ---
 
