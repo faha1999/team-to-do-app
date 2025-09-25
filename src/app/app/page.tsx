@@ -38,7 +38,7 @@ export default async function TodayPage() {
       <PageHeader
         title={`Today · ${format(todayStart, "EEEE, dd MMMM")}`}
         description="Review priorities, capture new work, and move key initiatives forward."
-        actions={<QuickAdd />}
+        actions={<QuickAdd userId={user.id} />}
       />
 
       {overdue.length > 0 ? (

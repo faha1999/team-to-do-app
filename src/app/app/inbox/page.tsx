@@ -57,7 +57,7 @@ export default async function InboxPage() {
         <EmptyState
           title="Zero inbox, zero stress"
           description="The moment something comes to mind, drop it here. We'll keep it safe until you schedule it."
-          action={<QuickAdd />}
+          action={<QuickAdd userId={user.id} />}
         />
       ) : (
         <div className="space-y-4">
@@ -70,7 +70,7 @@ export default async function InboxPage() {
               ))}
             </ul>
           </div>
-          <QuickAdd />
+          <QuickAdd userId={user.id} />
         </div>
       )}
     </div>

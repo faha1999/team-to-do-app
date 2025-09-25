@@ -60,7 +60,13 @@ export default async function ProjectListView({
       <PageHeader
         title={project.name}
         description={project.description ?? "Structured space to co-ordinate work."}
-        actions={<QuickAdd projectId={project.id} sectionId={defaultSectionId ?? undefined} />}
+        actions={
+          <QuickAdd
+            userId={user.id}
+            projectId={project.id}
+            sectionId={defaultSectionId ?? undefined}
+          />
+        }
       />
 
       <div className="grid gap-6 lg:grid-cols-2">

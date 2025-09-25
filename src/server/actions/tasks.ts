@@ -13,26 +13,42 @@ import { requireUser } from "@/lib/auth";
 
 const createTaskSchema = z.object({
   title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
   projectId: z.string().optional(),
   sectionId: z.string().optional(),
   dueDate: z.string().optional(),
   parentTaskId: z.string().optional(),
+  priority: z.nativeEnum(TaskPriority).optional(),
+  reminders: z
+    .array(
+      z.object({
+        remindAt: z.string(),
+        channel: z.nativeEnum(ReminderChannel),
+      })
+    )
+    .optional(),
 });
 
 export async function createTask(input: {
   title: string;
+  description?: string | null;
   projectId?: string | null;
   sectionId?: string | null;
   dueDate?: string | null;
   parentTaskId?: string | null;
+  priority?: TaskPriority | null;
+  reminders?: { remindAt: string; channel: ReminderChannel }[];
 }) {
   const user = await requireUser();
   const parsed = createTaskSchema.safeParse({
     title: input.title,
+    description: input.description ?? undefined,
     projectId: input.projectId ?? undefined,
     sectionId: input.sectionId ?? undefined,
     dueDate: input.dueDate ?? undefined,
     parentTaskId: input.parentTaskId ?? undefined,
+    priority: input.priority ?? undefined,
+    reminders: input.reminders ?? undefined,
   });
 
   if (!parsed.success) {
@@ -40,16 +56,32 @@ export async function createTask(input: {
   }
 
   const dueDate = parsed.data.dueDate ? new Date(parsed.data.dueDate) : undefined;
+  const description = parsed.data.description?.trim();
+  const reminders = parsed.data.reminders
+    ?.map((reminder) => {
+      const remindAt = new Date(reminder.remindAt);
+      if (Number.isNaN(remindAt.getTime())) {
+        return null;
+      }
+      return {
+        remindAt,
+        channel: reminder.channel,
+      };
+    })
+    .filter(Boolean) as { remindAt: Date; channel: ReminderChannel }[] | undefined;
 
   const task = await prisma.task.create({
     data: {
       title: parsed.data.title,
       creatorId: user.id,
+      description: description && description.length > 0 ? description : null,
       projectId: parsed.data.projectId,
       sectionId: parsed.data.sectionId,
       parentTaskId: parsed.data.parentTaskId ?? null,
       dueDate,
       assigneeId: user.id,
+      priority: parsed.data.priority ?? undefined,
+      reminders: reminders && reminders.length > 0 ? { create: reminders } : undefined,
     },
     include: {
       project: true,
