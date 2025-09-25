@@ -1,126 +1,52 @@
-// src/app/api/ics/[userId]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { format } from "date-fns";
+import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
-/**
- * Lightweight ICS feed for a user's tasks
- * - GET /api/ics/:userId
- * - Pulls tasks (due date or start/end) and emits VEVENTs
- * - No external services; pure text/calendar
- */
+const formatDate = (date: Date) => format(date, "yyyyMMdd'T'HHmmss'Z'");
 
-export const dynamic = 'force-dynamic';
+export async function GET(_request: Request, context: unknown) {
+  const { params } = context as { params: { userId: string } };
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { userId: string } },
-) {
-  const userId = params.userId;
-
-  // Fetch upcoming tasks (e.g., last 30 days past due + next 180 days)
-  const now = new Date();
-  const past = new Date(now);
-  past.setDate(past.getDate() - 30);
-  const future = new Date(now);
-  future.setDate(future.getDate() + 180);
-
-  // Adjust these fields to your Task model names
   const tasks = await prisma.task.findMany({
     where: {
-      userId,
-      OR: [
-        { dueDate: { gte: past, lte: future } },
-        { startAt: { gte: past, lte: future } },
-      ],
-      // Example: exclude cancelled
-      status: { not: 'CANCELLED' as any },
+      assigneeId: params.userId,
+      dueDate: { not: null },
     },
-    orderBy: [{ dueDate: 'asc' }, { startAt: 'asc' }],
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      dueDate: true, // Date
-      startAt: true, // Date
-      endAt: true, // Date
-      project: { select: { name: true } },
-      updatedAt: true,
-    },
+    orderBy: { dueDate: "asc" },
+    take: 250,
   });
 
-  const lines: string[] = [];
-  const prodId = '-//team-to-do//ics//EN';
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Team To-Do//EN",
+    `X-WR-CALNAME:Tasks for ${params.userId}`,
+  ];
 
-  lines.push('BEGIN:VCALENDAR');
-  lines.push('VERSION:2.0');
-  lines.push(`PRODID:${prodId}`);
-  lines.push('CALSCALE:GREGORIAN');
-  lines.push('METHOD:PUBLISH');
-
-  for (const t of tasks) {
-    const dtstamp = toICSDateTime(t.updatedAt ?? new Date());
-    const uid = `${t.id}@team-to-do`;
-    const summary = escapeICS(t.title || 'Task');
-    const desc = escapeICS(t.description || '');
-    const project = t.project?.name ? ` [${t.project.name}]` : '';
-
-    lines.push('BEGIN:VEVENT');
-    lines.push(`UID:${uid}`);
-    lines.push(`DTSTAMP:${dtstamp}`);
-
-    if (t.startAt || t.endAt) {
-      // Timed event
-      if (t.startAt) lines.push(`DTSTART:${toICSDateTime(t.startAt)}`);
-      if (t.endAt) lines.push(`DTEND:${toICSDateTime(t.endAt)}`);
-    } else if (t.dueDate) {
-      // All-day due date
-      lines.push(`DTSTART;VALUE=DATE:${toICSDate(t.dueDate)}`);
-      // For all-day ICS, DTEND is usually exclusive next day
-      const next = new Date(t.dueDate);
-      next.setDate(next.getDate() + 1);
-      lines.push(`DTEND;VALUE=DATE:${toICSDate(next)}`);
+  for (const task of tasks) {
+    if (!task.dueDate) continue;
+    lines.push("BEGIN:VEVENT");
+    lines.push(`UID:${task.id}@team-to-do.local`);
+    lines.push(`DTSTAMP:${formatDate(task.createdAt)}`);
+    lines.push(`DTSTART:${formatDate(task.dueDate)}`);
+    lines.push(`SUMMARY:${escapeText(task.title)}`);
+    if (task.description) {
+      lines.push(`DESCRIPTION:${escapeText(task.description)}`);
     }
-
-    lines.push(`SUMMARY:${summary}${project}`);
-    if (desc) lines.push(`DESCRIPTION:${desc}`);
-    lines.push('END:VEVENT');
+    lines.push("END:VEVENT");
   }
 
-  lines.push('END:VCALENDAR');
+  lines.push("END:VCALENDAR");
 
-  const body = lines.join('\r\n');
-  return new NextResponse(body, {
-    status: 200,
+  return new NextResponse(lines.join("\n"), {
     headers: {
-      'Content-Type': 'text/calendar; charset=utf-8',
-      'Content-Disposition': `attachment; filename="tasks-${userId}.ics"`,
-      'Cache-Control': 'no-store',
+      "Content-Type": "text/calendar; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${params.userId}.ics"`,
     },
   });
 }
 
-// Helpers
-function pad(n: number) {
-  return n < 10 ? `0${n}` : `${n}`;
-}
-function toICSDate(date: Date): string {
-  return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(
-    date.getUTCDate(),
-  )}`;
-}
-function toICSDateTime(date: Date): string {
-  return `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(
-    date.getUTCDate(),
-  )}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(
-    date.getUTCSeconds(),
-  )}Z`;
-}
-function escapeICS(s: string) {
-  return s
-    .replace(/\\/g, '\\\\')
-    .replace(/;/g, '\\;')
-    .replace(/,/g, '\\,')
-    .replace(/\n/g, '\\n');
+function escapeText(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,");
 }

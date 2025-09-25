@@ -1,31 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
-export function QuickAdd({ onCreate }: { onCreate?: (title: string) => void }) {
+import { createTask } from "@/server/actions/tasks";
+
+export function QuickAdd({
+  projectId,
+  sectionId,
+}: {
+  projectId?: string;
+  sectionId?: string;
+}) {
   const [title, setTitle] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!title.trim()) return;
-    onCreate?.(title.trim());
-    setTitle("");
+    if (!title.trim()) {
+      setError("Add a task title to continue");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        await createTask({ title: title.trim(), projectId, sectionId });
+        setTitle("");
+        setError(null);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to create task");
+      }
+    });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex w-full gap-3">
       <input
-        className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+        className="flex-1 rounded-xl border border-black/10 bg-white/80 px-4 py-3 text-sm text-slate-900 shadow-inner shadow-black/5 focus:border-slate-900 focus:outline-none"
         placeholder="Add a task..."
         value={title}
         onChange={(event) => setTitle(event.target.value)}
       />
       <button
         type="submit"
-        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+        className="rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
+        disabled={isPending}
       >
-        Add
+        {isPending ? "Adding…" : "Add"}
       </button>
+      {error ? (
+        <p className="self-end text-xs text-rose-600" aria-live="polite">
+          {error}
+        </p>
+      ) : null}
     </form>
   );
 }

@@ -1,19 +1,30 @@
+import { redirect } from "next/navigation";
+
+import { auth } from "@/auth";
+
 export type SessionUser = {
   id: string;
   email: string;
   name?: string | null;
-  role: "ADMIN" | "MEMBER";
 };
 
 export async function getCurrentUser(): Promise<SessionUser | null> {
-  // TODO: Integrate with NextAuth credentials provider.
-  return null;
+  const session = await auth();
+  if (!session?.user) {
+    return null;
+  }
+
+  return {
+    id: session.user.id,
+    email: session.user.email ?? "",
+    name: session.user.name,
+  };
 }
 
-export async function requireUser() {
+export async function requireUser(): Promise<SessionUser> {
   const user = await getCurrentUser();
   if (!user) {
-    throw new Error("Authentication required");
+    redirect("/login");
   }
   return user;
 }

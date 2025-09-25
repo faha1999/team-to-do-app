@@ -29,24 +29,39 @@ export function FilterBuilder({
   }
 
   return (
-    <div className="space-y-3 rounded-lg border border-dashed border-indigo-300 p-4">
-      <header className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-slate-800">Filter Builder</h3>
+    <div className="space-y-4 rounded-2xl border border-dashed border-black/10 bg-white/70 p-6 shadow-inner shadow-black/5">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 className="text-base font-semibold text-slate-900">Design a filter</h3>
+          <p className="text-sm text-slate-600">
+            Combine criteria such as due dates, priority, labels, and ownership. Save it once you love the view.
+          </p>
+        </div>
         <button
           onClick={addCondition}
-          className="text-sm font-medium text-indigo-600 hover:underline"
+          className="rounded-full border border-black/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-700 transition hover:border-black/40"
           type="button"
         >
           Add condition
         </button>
       </header>
       {conditions.length === 0 ? (
-        <p className="text-sm text-slate-500">No conditions yet.</p>
+        <p className="rounded-xl border border-dashed border-slate-200 bg-white/70 px-4 py-6 text-sm text-slate-500">
+          Start by adding a condition. For example: <strong className="font-semibold text-slate-700">status on today</strong> or
+          <strong className="font-semibold text-slate-700"> priority P1</strong>.
+        </p>
       ) : (
-        <ul className="space-y-2 text-sm text-slate-700">
+        <ul className="space-y-3 text-sm text-slate-700">
           {conditions.map((condition, index) => (
-            <li key={`${condition.field}-${index}`}>
-              {condition.field} {condition.operator} {condition.value}
+            <li
+              key={`${condition.field}-${index}`}
+              className="flex items-center justify-between rounded-xl border border-black/5 bg-white/80 px-4 py-3 shadow-sm"
+            >
+              <span>
+                <span className="font-semibold text-slate-900">{condition.field}</span>{" "}
+                {condition.operator}{" "}
+                <span className="font-semibold text-slate-900">{condition.value}</span>
+              </span>
             </li>
           ))}
         </ul>
