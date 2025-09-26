@@ -21,6 +21,16 @@ export default async function TodayPage() {
     include: {
       project: true,
       section: true,
+      subtasks: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          order: true,
+          dueDate: true,
+        },
+      },
     },
     orderBy: [{ dueDate: "asc" }, { createdAt: "asc" }],
   });

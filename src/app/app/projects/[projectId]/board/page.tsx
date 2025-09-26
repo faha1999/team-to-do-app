@@ -28,6 +28,16 @@ export default async function ProjectBoardView({
         include: {
           project: true,
           section: true,
+          subtasks: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              order: true,
+              dueDate: true,
+            },
+          },
         },
       },
     },

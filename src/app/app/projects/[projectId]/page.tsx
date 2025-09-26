@@ -26,6 +26,16 @@ export default async function ProjectListView({
         include: {
           section: true,
           project: true,
+          subtasks: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              id: true,
+              title: true,
+              status: true,
+              order: true,
+              dueDate: true,
+            },
+          },
         },
         orderBy: [{ sectionId: "asc" }, { order: "asc" }],
       },
